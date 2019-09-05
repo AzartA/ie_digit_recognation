@@ -5,7 +5,7 @@ import java.util.*;
 public class Main {
 
 	public static void main(String[] args) {
-		 Weights wts = new Weights();
+		 NeuronNet wts = new NeuronNet();
 		 Scanner sc = new Scanner(System.in);
 		 
 		 System.out.println("1. Learn the network\r\n" + 
@@ -18,16 +18,15 @@ public class Main {
 				break;
 			case 2:
 				System.out.println("Input grid:");
-				int[] inNeurons = new int [16];		// input neurons
+				double [] inNeurons = new double [15];		// input neurons
 				sc.nextLine(); 
 				for(int l = 0; l<5; l++) {
 					  String line = sc.nextLine();
 					  for(int i = 0; i<3;i++) {
-						  inNeurons[l*3+i] = line.charAt(i) == 'X' ? 1 : -1; 
+						  inNeurons[l*3+i] = line.charAt(i) == 'X' ? 1.0 : -1.0; 
 					  }
 				 }
 				 sc.close();
-				 inNeurons[15] = 1; 					// bias multiplier
 				 wts.loadFromF();
 				 System.out.println("This number is " + wts.takeDigit(inNeurons));
 				 break;
