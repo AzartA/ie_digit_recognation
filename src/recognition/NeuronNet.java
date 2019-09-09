@@ -29,15 +29,14 @@ public class NeuronNet implements Serializable {
 	transient private double[][] neurons;
 	transient private double currErr;
 	protected static final Logger LOGGER = Logger.getLogger(NeuronNet.class.getName());
-
-	static Handler handler = new MyConsoleHandler();
+	
 	
 
 	public NeuronNet() {
-		this(Level.INFO, 784, 10);
+		this(784, 10);
 	}
 
-	public NeuronNet(Level logLevel, int... neuronsInLayers) {
+	public NeuronNet(int... neuronsInLayers) {
 		LAYERS = neuronsInLayers.length;
 		NEURONS_IN_LAYERS = neuronsInLayers.clone();
 		weights = new double[LAYERS - 1][][];
@@ -51,17 +50,10 @@ public class NeuronNet implements Serializable {
 				}
 			}
 		}
-		handler.setLevel(logLevel);
-		handler.setFormatter(new SimpleFormatter());
-				
-		LOGGER.addHandler(handler);
-		LOGGER.setLevel(logLevel);
-		LOGGER.setUseParentHandlers(false);
+		
 	}
 
-	public NeuronNet(int... neuronsInLayers) {
-		this(Level.INFO, neuronsInLayers);
-	}
+	
 
 	
 	public void saveToF() {

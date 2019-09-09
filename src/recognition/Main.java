@@ -6,14 +6,21 @@ import java.util.Scanner;
 public class Main {
 
 	public static void main(String[] args) {
+		LogController logs = new LogController();
+		logs.on();
 		int[] neurons = new int[100];
 		NeuronNet wts;
 		int i;
 		Scanner sc = new Scanner(System.in);
-		System.out.println("1. Learn the network\n" + 
+		System.out.println("0. Prepare training samples for learning.\n" +
+				"1. Learn the network\n" + 
 				"2. Guess all numbers\n" + 
 				"3. Guess a number from  a text file\nYour choice: ");
 		switch (sc.nextInt()) {
+		case 0:
+			Assets as1  = new Assets();
+			as1.fillTrainingSamples();
+			break;
 		case 1:
 			System.out.print("Enter the sizes of the layers: ");
 			i = 0;
@@ -21,13 +28,14 @@ public class Main {
 				neurons[i++]= sc.nextInt();
 			}
 			sc.close();
-			System.out.println("Learning...");
+			System.out.println("Learning...  ");
 			neurons = Arrays.copyOf(neurons, i);
 			wts = new NeuronNet(neurons);
-
+			//wts.selfLearning(1000, 0, 1, 0.5, 10, 0.15, 0, 0); // 784 16 16 10 - 46,12%
+			wts.selfLearning(1000, 0, 30, 0.5, 10, 0.15, 0, 0); // 784 16 16 10 - 94,3% 
 			//wts.selfLearning(1000, 0, 100, 0.5, 10, 0.15, 0, 0); // 784 6 16 10 - 87,44%
-			wts.selfLearning(1000, 0, 100, 0.5, 10, 0.15, 0, 0); // 784 16 16 10 - nnw5c - 91.92%
-			//wts.selfLearning(7000, 0, 100, 0.5, 10, 0.15, 0, 0); // 784 16 16 10 - 97,21%
+			//wts.selfLearning(1000, 0, 100, 0.5, 10, 0.15, 0, 0); // 784 16 16 10 - nnw5c - 98,06%
+			wts.selfLearning(7000, 0, 100, 0.5, 10, 0.15, 0, 0); // 784 16 16 10 - 97,21%
 
 			System.out.println("Done. Saved to the file.");
 			break;
