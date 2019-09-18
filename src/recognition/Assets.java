@@ -87,7 +87,7 @@ public class Assets implements Serializable {
 		
 	}
 	
-	public double[] getinputSample (String fileName){
+/*	public double[] getinputSample (String fileName){
 		double[] inputSample = new double[785];
 		try(FileSystem zipFileSys = FileSystems.newFileSystem(ZIP_PATH, null)) {
 			Path path = zipFileSys.getPath("/data/" + fileName);
@@ -102,6 +102,24 @@ public class Assets implements Serializable {
 		LOGGER.log(Level.FINE, "The imput sample has downloaded.");
 		return inputSample;
 	}
+*/
+	
+	public double[] getinputSample (String fileName){
+		double[] inputSample = new double[785];
+        try(FileInputStream fs = new java.io.FileInputStream(fileName)) {
+        	Scanner sc = new Scanner (fs);
+			for(int i = 0; i<784; i++) {
+				inputSample[i] = sc.nextDouble();
+			}
+			sc.close();
+			inputSample[784] = 0.0;
+		}catch(IOException ex) {
+			ex.printStackTrace();
+		}
+		LOGGER.log(Level.FINE, "The input sample has downloaded.");
+		return inputSample;
+	}
+	
 	
 	public void saveToF() {
 		 
