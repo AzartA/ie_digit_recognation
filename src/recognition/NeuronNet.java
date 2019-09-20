@@ -12,7 +12,7 @@ import java.util.logging.*;
 
 
 /**
- * @version 4.7
+ * @version 6
  * @serial NEURONS_IN_LAYERS
  * @serial weights
  * @serial LAYERS
