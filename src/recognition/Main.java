@@ -1,35 +1,46 @@
 package recognition;
 
+
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Scanner;
+import java.util.logging.Logger;
 
 public class Main {
 
 	public static void main(String[] args) {
 		LogController logs = new LogController();
-		logs.on();
-		int[] neurons = new int[100];
+		//logs.on();
+		//logs.setLevel("INFO");
+		//logs.setLevel("FINE");
+		logs.setLevel("CONFIG");
+		Logger LOGGER =Logger.getLogger(NeuronNet.class.getName());
+		
 		NeuronNet wts;
 		int i;
 		Scanner sc = new Scanner(System.in);
-		System.out.println("0. Prepare training samples for learning.\n" +
+		LOGGER.config("0. Prepare training samples for learning.\n" +
 				"1. Learn the network\n" + 
 				"2. Guess all numbers\n" + 
 				"3. Guess a number from  a text file\nYour choice: ");
+		
 		switch (sc.nextInt()) {
 		case 0:
 			Assets as1  = new Assets();
 			as1.fillTrainingSamples();
 			break;
 		case 1:
-			System.out.print("Enter the sizes of the layers: ");
-			i = 0;
-			while(sc.hasNextInt()) {
-				neurons[i++]= sc.nextInt();
-			}
+			int[] neurons;
+			LOGGER.config("Enter the sizes of the layers: ");
+			String line = sc.nextLine();
 			sc.close();
-			System.out.println("Learning...  ");
-			neurons = Arrays.copyOf(neurons, i);
+			String[] nums = line.split(" ");
+			neurons = new int[nums.length];
+			LOGGER.config("Learning...  ");
+			for (i=0;i<nums.length; i++) {
+				neurons[i] = Integer.valueOf(nums[i]);
+			}
+			
 			wts = new NeuronNet(neurons);
 			//wts.selfLearning(1000, 0, 1, 0.5, 10, 0.15, 0, 0); // 784 16 16 10 - 46,12%
 			wts.selfLearning(1000, 0, 30, 0.5, 10, 0.15, 0, 0); // 784 16 16 10 - 94,3% 
@@ -37,11 +48,11 @@ public class Main {
 			//wts.selfLearning(1000, 0, 100, 0.5, 10, 0.15, 0, 0); // 784 16 16 10 - nnw5c - 98,06%
 			wts.selfLearning(7000, 0, 100, 0.5, 10, 0.15, 0, 0); // 784 16 16 10 - 97,21%
 
-			System.out.println("Done. Saved to the file.");
+			LOGGER.config("Done. Saved to the file.");
 			break;
 		case 2:
 			sc.close();
-			System.out.println("Guessing...");
+			LOGGER.config("Guessing...");
 			wts = NeuronNet.loadFromF();
 			int count = 700; // count of each number [0-9]
 			//wts.loadInputNumbers(7000, 0);
@@ -53,19 +64,20 @@ public class Main {
 				}
 				
 			}
+		
 			System.out.printf("The network prediction accuracy: " + i + "/" + (count*10) + ", %1$.2f%1$1%", (double)i*100/(count*10));
 			
 			break;
 		case 3:	
-			System.out.println("Enter filename:");
+			LOGGER.config("Enter filename:");
 			String file = sc.next();
 			sc.close();
 			wts = NeuronNet.loadFromF();
 			Assets as = new Assets();
-			System.out.println("The number is " + wts.getDigit(as.getinputSample(file)));
+			LOGGER.config("The number is " + wts.getDigit(as.getinputSample(file)));
 			break;
 		default:
-			System.out.println("Unknown comand.");
+			LOGGER.config("Unknown comand.");
 		}
 	}
 
