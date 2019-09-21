@@ -1,8 +1,6 @@
 package recognition;
 
 
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
@@ -15,7 +13,6 @@ public class Main {
 		//logs.setLevel("FINE");
 		logs.setLevel("CONFIG");
 		Logger LOGGER =Logger.getLogger(NeuronNet.class.getName());
-		
 		NeuronNet wts;
 		int i;
 		Scanner sc = new Scanner(System.in);
@@ -46,7 +43,7 @@ public class Main {
 			wts.selfLearning(1000, 0, 30, 0.5, 10, 0.15, 0, 0); // 784 16 16 10 - 94,3% 
 			//wts.selfLearning(1000, 0, 100, 0.5, 10, 0.15, 0, 0); // 784 6 16 10 - 87,44%
 			//wts.selfLearning(1000, 0, 100, 0.5, 10, 0.15, 0, 0); // 784 16 16 10 - nnw5c - 98,06%
-			wts.selfLearning(7000, 0, 100, 0.5, 10, 0.15, 0, 0); // 784 16 16 10 - 97,21%
+			//wts.selfLearning(7000, 0, 100, 0.5, 10, 0.15, 0, 0); // 784 16 16 10 - 97,21%
 
 			LOGGER.config("Done. Saved to the file.");
 			break;
@@ -64,9 +61,8 @@ public class Main {
 				}
 				
 			}
-		
-			System.out.printf("The network prediction accuracy: " + i + "/" + (count*10) + ", %1$.2f%1$1%", (double)i*100/(count*10));
 			
+			LOGGER.config(String.format("The network prediction accuracy: %1$d/%2$d, %3$.2f%3$%", i, count*10, (double)i*100/(count*10)));
 			break;
 		case 3:	
 			LOGGER.config("Enter filename:");

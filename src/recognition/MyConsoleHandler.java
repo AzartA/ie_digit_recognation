@@ -12,7 +12,11 @@ public class MyConsoleHandler extends StreamHandler {
 	public void publish(LogRecord record){      
         if(record.getLevel().intValue() < Level.WARNING.intValue()) {
             if(record.getLevel().intValue()==Level.CONFIG.intValue()) {
-            	 System.out.println(record.getMessage());
+            	 if(record.getParameters()==null) {
+            		 System.out.println(record.getMessage());
+            	 }else {
+            		 System.out.println(formatter.formatMessage(record));
+            	 }
             }else {
             System.out.println(formatter.format(record));  
             }
