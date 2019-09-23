@@ -12,7 +12,7 @@ import java.util.logging.*;
 
 
 /**
- * @version 6
+ * @version 6.2
  * @serial NEURONS_IN_LAYERS
  * @serial weights
  * @serial LAYERS
@@ -87,10 +87,6 @@ public class NeuronNet implements Serializable {
 		LOGGER.finest("loaded");
 		inputNumbers = as.createTraningSet(countOfSamplesOfANumber, startIndex);
 		iInLength = inputNumbers.length;
-	}
-
-	public void learnNeuronNet(double eta) {
-
 	}
 
 	public double[] computeOut(double[] inputNumber) {
@@ -189,7 +185,13 @@ public class NeuronNet implements Serializable {
 	}
 
 	public void selfLearning(int numberOfTranigSets, int ofset, int epoches, double eta, int batchSize, double lambda,
-			double minErr, double minDErr) {
+								double minErr, double minDErr) {
+		
+		LOGGER.log(Level.FINE, "The selflearning of Net starting with:\nNumber of training sets of each digit: {0};\n"+ 
+								"Ofset in tranigbase: {1};\nNumber of epoches: {2};\nParametr eta: {3};\nThe size of a batch: {4};\n" +
+								"Parametr lambda: {5};\nThe minimal error of the Net: {6};\nThe minimal interval between last and next errors:{7}.",
+								new Object[]{numberOfTranigSets, ofset, epoches, eta, batchSize, lambda, minErr, minDErr});
+		
 		// double currErr = Short.MAX_VALUE;
 		double lastErr = 0;
 		double dErr = 0;
