@@ -14,6 +14,7 @@ public class Main {
 		//logs.setLevel("INFO");
 		//logs.setLevel("FINE");
 		//logs.setLevel("CONFIG");
+
 		Logger LOGGER =Logger.getLogger(NeuronNet.class.getName());
 		
 		NeuronNet wts;
@@ -25,6 +26,7 @@ public class Main {
 				"2. Guess all numbers\n" + 
 				//"3. Guess a number from  a text file\nYour choice: ");
 				"5. Выход\nYour choice: ");
+
 		
 		switch (sc.nextInt()) {
 		case 0:
@@ -81,6 +83,7 @@ public class Main {
 		default:
 			LOGGER.config("Unknown comand.");
 			LOGGER.finest("Программа закончилась\nСчастливо оставаться!");
+
 		}
 	}
 
