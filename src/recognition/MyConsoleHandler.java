@@ -1,9 +1,12 @@
 package recognition;
 
+
 import java.util.logging.*;
 
 public class MyConsoleHandler extends StreamHandler {
-	private Formatter formatter = new SimpleFormatter();
+
+	//private Formatter formatter = new SimpleFormatter();
+
 	static{System.setProperty("java.util.logging.SimpleFormatter.format",
             "%4$7s: %1$td.%<tm.%<ty %1$tT %5$s (%2$s)");
 	}
@@ -12,16 +15,17 @@ public class MyConsoleHandler extends StreamHandler {
 	public void publish(LogRecord record){      
         if(record.getLevel().intValue() < Level.WARNING.intValue()) {
             if(record.getLevel().intValue()==Level.CONFIG.intValue()) {
-            	 if(record.getParameters()==null) {
-            		 System.out.println(record.getMessage());
-            	 }else {
-            		 System.out.println(formatter.formatMessage(record));
-            	 }
+            	 System.out.println(record.getMessage());
             }else {
-            System.out.println(formatter.format(record));  
+
+            	this.setOutputStream(System.out);
+            	super.publish(record);
             }
-        }else
-            System.err.println(formatter.format(record));
+        }else {
+        	this.setOutputStream(System.err);
+    		super.publish(record);
+        }
+
     }
 	
 }
