@@ -13,16 +13,18 @@ public class Main {
 		//logs.on();
 		//logs.setLevel("INFO");
 		//logs.setLevel("FINE");
-		logs.setLevel("CONFIG");
+		//logs.setLevel("CONFIG");
 		Logger LOGGER =Logger.getLogger(NeuronNet.class.getName());
 		
 		NeuronNet wts;
 		int i;
+		LOGGER.fine("Программа стартовала");
 		Scanner sc = new Scanner(System.in);
 		LOGGER.config("0. Prepare training samples for learning.\n" +
 				"1. Learn the network\n" + 
 				"2. Guess all numbers\n" + 
-				"3. Guess a number from  a text file\nYour choice: ");
+				//"3. Guess a number from  a text file\nYour choice: ");
+				"5. Выход\nYour choice: ");
 		
 		switch (sc.nextInt()) {
 		case 0:
@@ -78,6 +80,7 @@ public class Main {
 			break;
 		default:
 			LOGGER.config("Unknown comand.");
+			LOGGER.finest("Программа закончилась\nСчастливо оставаться!");
 		}
 	}
 
