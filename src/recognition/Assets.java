@@ -30,12 +30,12 @@ public class Assets implements Serializable {
 	protected static final Logger LOGGER = Logger.getLogger(NeuronNet.class.getName());
 	
 	public Assets() {
-		LOGGER.setLevel(Level.INFO);
+		//LOGGER.setLevel(Level.INFO);
 	}
 	
 	
 	public void fillTrainingSamples () {
-		System.out.println("Reading...");
+		LOGGER.config("Reading...");
 		try(FileSystem zipFileSys = FileSystems.newFileSystem(ZIP_PATH, null)) {
 			
 			for(Path path:zipFileSys.getRootDirectories()) {

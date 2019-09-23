@@ -11,10 +11,11 @@ public class Main {
 		//logs.on();
 		//logs.setLevel("INFO");
 		//logs.setLevel("FINE");
-		logs.setLevel("CONFIG");
+		//logs.setLevel("CONFIG");
 		Logger LOGGER =Logger.getLogger(NeuronNet.class.getName());
 		NeuronNet wts;
 		int i;
+		LOGGER.finest("Программа стартовала");
 		Scanner sc = new Scanner(System.in);
 		LOGGER.config("0. Prepare training samples for learning.\n" +
 				"1. Learn the network\n" + 
