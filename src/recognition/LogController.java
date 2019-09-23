@@ -16,7 +16,7 @@ public class LogController {
 			e.printStackTrace();
 		}
 	}
-	public LogController(){
+	public static void configure(){
 		handler.setLevel(Level.CONFIG);
 		handler.setFormatter(new SimpleFormatter());
 		LOGGER.addHandler(handler);
@@ -25,7 +25,7 @@ public class LogController {
 			private static final String format = "%1$7s: %2$td.%<tm.%<ty %<tT  %3$s (%4$s - %5$s)%n";
 	          @Override
 	          public synchronized String format(LogRecord lr) {
-	              this.formatMessage(lr);
+	        	  lr.setMessage(this.formatMessage(lr));
 	              //if(lr.getLevel()==Level.CONFIG) {
 	            	  lr.setMessage(lr.getMessage().replaceAll("\\n", "\\\n\\\t\\\t\\\t\\\t\\\t\\\t\\\t"));
 	              //}
@@ -44,12 +44,12 @@ public class LogController {
 		LOGGER.setUseParentHandlers(false);
 	}
 	
-	public void setLevel(String logLevel) {
+	public static void setLevel(String logLevel) {
 		Level level = Level.parse(logLevel);
 		handler.setLevel(level);
 	}
 	
-	public void setLevel(String logLevel, String out) {
+	public static void setLevel(String logLevel, String out) {
 		Level level = Level.parse(logLevel);
 		switch (out) {
 		case "file":
@@ -61,13 +61,13 @@ public class LogController {
 		}
 	}
 	
-	public void on () {
+	public static void on () {
 		setLevel("ALL","file");
 		setLevel("ALL","console");
 		LOGGER.finest("Logger is ON");
 	}
 	
-	public void off () {
+	public static void off () {
 		setLevel("OFF","file");
 		setLevel("OFF","console");
 	}

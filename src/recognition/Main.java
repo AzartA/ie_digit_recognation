@@ -1,20 +1,15 @@
 package recognition;
 
 
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Scanner;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Main {
 
 	public static void main(String[] args) {
-		LogController logs = new LogController();
-		//logs.on();
-		//logs.setLevel("INFO");
-		//logs.setLevel("FINE");
-		//logs.setLevel("CONFIG");
-
+		LogController.configure();
+		
 		Logger LOGGER =Logger.getLogger(NeuronNet.class.getName());
 		
 		NeuronNet wts;
@@ -27,13 +22,15 @@ public class Main {
 				//"3. Guess a number from  a text file\nYour choice: ");
 				"5. Выход\nYour choice: ");
 
-		
-		switch (sc.nextInt()) {
+		int res = sc.nextInt();
+		switch (res) {
 		case 0:
+			LOGGER.fine("Typed: 0");
 			Assets as1  = new Assets();
 			as1.fillTrainingSamples();
 			break;
 		case 1:
+			LOGGER.fine("Typed: 1");
 			int[] neurons;
 			LOGGER.config("Enter the sizes of the layers: ");
 			String line = sc.nextLine();
@@ -55,6 +52,7 @@ public class Main {
 			LOGGER.config("Done. Saved to the file.");
 			break;
 		case 2:
+			LOGGER.fine("Typed: 2");
 			sc.close();
 			LOGGER.config("Guessing...");
 			wts = NeuronNet.loadFromF();
@@ -72,6 +70,7 @@ public class Main {
 			LOGGER.config(String.format("The network prediction accuracy: %1$d/%2$d, %3$.2f%3$%", i, count*10, (double)i*100/(count*10)));
 			break;
 		case 3:	
+			LOGGER.fine("Typed: 3");
 			LOGGER.config("Enter filename:");
 			String file = sc.next();
 			sc.close();
@@ -80,6 +79,8 @@ public class Main {
 			LOGGER.config("The number is " + wts.getDigit(as.getinputSample(file)));
 			break;
 		default:
+			LOGGER.log(Level.FINE, "Typed: {0}", res);
+			sc.close();
 			LOGGER.config("Unknown comand.");
 			LOGGER.finest("Программа закончилась\nСчастливо оставаться!");
 
