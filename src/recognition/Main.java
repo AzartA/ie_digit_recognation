@@ -9,7 +9,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		LogController.configure();
-		
+		LogController.setLevel("FINE");;
 		Logger LOGGER =Logger.getLogger(NeuronNet.class.getName());
 		
 		NeuronNet wts;
@@ -31,7 +31,10 @@ public class Main {
 			LOGGER.fine("Typed: 1");
 			int[] neurons;
 			LOGGER.config("Enter the sizes of the layers: ");
-			String line = sc.nextLine();
+			String line= "";
+			while (sc.hasNextLine()) {
+			line = sc.nextLine();
+			}
 			sc.close();
 			String[] nums = line.split(" ");
 			neurons = new int[nums.length];
@@ -43,10 +46,11 @@ public class Main {
 			LOGGER.log(Level.FINE, "New Neuron Net with {0} neurons in the layers.", line);
 			wts = new NeuronNet(neurons);
 			//wts.selfLearning(1000, 0, 1, 0.5, 10, 0.15, 0, 0); // 784 16 16 10 - 46,12%
-			wts.selfLearning(1000, 0, 30, 0.5, 10, 0.15, 0, 0); // 784 16 16 10 - 94,3% 
+			//wts.selfLearning(1000, 0, 30, 0.5, 10, 0.15, 0, 0); // 784 16 16 10 - 94,3% 
 			//wts.selfLearning(1000, 0, 100, 0.5, 10, 0.15, 0, 0); // 784 6 16 10 - 87,44%
 			//wts.selfLearning(1000, 0, 100, 0.5, 10, 0.15, 0, 0); // 784 16 16 10 - nnw5c - 98,06%
 			//wts.selfLearning(7000, 0, 100, 0.5, 10, 0.15, 0, 0); // 784 16 16 10 - 97,21%
+			wts.selfLearning(10, 0, 5, 0.5, 10, 0.15, 0, 0); // 
 
 			LOGGER.config("Done. Saved to the file.");
 			break;
@@ -55,7 +59,7 @@ public class Main {
 			sc.close();
 			LOGGER.config("Guessing...");
 			wts = NeuronNet.loadFromF();
-			int count = 700; // count of each number [0-9]
+			int count = 70; // count of each number [0-9]
 			//wts.loadInputNumbers(7000, 0);
 			wts.loadInputNumbers(count, 1200);
 			i=0;
