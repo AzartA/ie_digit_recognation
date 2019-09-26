@@ -38,28 +38,7 @@ public class LogController {
 		handler.setLevel(Level.CONFIG);
 		LOGGER.addHandler(handler);
 		fhandler.setLevel(Level.ALL);
-<<<<<<< HEAD
 		fhandler.setFormatter(myFormatter);
-=======
-		fhandler.setFormatter(new SimpleFormatter() {
-			private static final String format = "%1$7s: %2$td.%<tm.%<ty %<tT  %3$s (%4$s - %5$s)%n";
-	          @Override
-	          public synchronized String format(LogRecord lr) {
-	        	  lr.setMessage(this.formatMessage(lr));
-	              //if(lr.getLevel()==Level.CONFIG) {
-	            	  lr.setMessage(lr.getMessage().replaceAll("\\n", "\\\n\\\t\\\t\\\t\\\t\\\t\\\t\\\t"));
-	              //}
-	        	  return String.format(format,
-	                      lr.getLevel().getLocalizedName(),
-	        			  new Date(lr.getMillis()),
-	                      lr.getMessage(),
-	                      lr.getSourceClassName(),
-	                      lr.getSourceMethodName()
-	              );
-	          }
-		});
->>>>>>> refs/remotes/origin/Stage6
-		
 		LOGGER.addHandler(fhandler);
 		LOGGER.setLevel(Level.ALL);
 		LOGGER.setUseParentHandlers(false);

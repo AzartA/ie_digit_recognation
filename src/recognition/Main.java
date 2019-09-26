@@ -9,11 +9,6 @@ public class Main {
 
 	public static void main(String[] args) {
 		LogController.configure();
-<<<<<<< HEAD
-		LogController.setLevel("FINE");;
-=======
-		
->>>>>>> refs/remotes/origin/Stage6
 		Logger LOGGER =Logger.getLogger(NeuronNet.class.getName());
 		
 		NeuronNet wts;
@@ -23,13 +18,8 @@ public class Main {
 		LOGGER.config("0. Prepare training samples for learning.\n" +
 				"1. Learn the network\n" + 
 				"2. Guess all numbers\n" + 
-<<<<<<< HEAD
 				"3. Guess a number from  a text file\nYour choice: ");
-=======
-				//"3. Guess a number from  a text file\nYour choice: ");
-				"5. Выход\nYour choice: ");
 
->>>>>>> refs/remotes/origin/Stage6
 		int res = sc.nextInt();
 		switch (res) {
 		case 0:
