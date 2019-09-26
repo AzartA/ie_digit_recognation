@@ -6,7 +6,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 import java.util.logging.*;
 
 
@@ -101,7 +104,7 @@ public class NeuronNet implements Serializable {
 	public int straightPropagation(double[] inputNumber) {
 		neurons = new double[LAYERS][];
 		neurons[0] = inputNumber.clone();
-		neurons[0][inputNumber.length - 1] = 1.0;
+		neurons[0][inputNumber.length - 1] = 1.0;											// bias multiplier
 		for (int l = 0; l < LAYERS - 1; l++) {
 			neurons[l + 1] = MatrixMath.activateNeuron(neurons[l], weights[l]);
 			if (l != LAYERS - 2) {
@@ -117,13 +120,13 @@ public class NeuronNet implements Serializable {
 		// last layer LAYERS-1
 		error[0] = new double[NEURONS_IN_LAYERS[LAYERS - 1]];
 		for (int out = 0; out < NEURONS_IN_LAYERS[LAYERS - 1]; out++) {
-			error[0][out] = out == idealNumber ? (neurons[LAYERS - 1][out] - 1.0) : (neurons[LAYERS - 1][out]);
-			currErr += error[0][out] * error[0][out] * 0.5;
-			error[0][out] *= neurons[LAYERS - 1][out] * (1 - neurons[LAYERS - 1][out]);
+			error[0][out] = out == idealNumber ? (neurons[LAYERS - 1][out] - 1.0) : (neurons[LAYERS - 1][out]);		// error δ (∂E/∂z) of last layer = a-t, derivative of error function (quadratic) 
+			currErr += error[0][out] * error[0][out] * 0.5;															// E = 1/2 * Σ(t-a)² error function (quadratic)
+			error[0][out] *= neurons[LAYERS - 1][out] * (1 - neurons[LAYERS - 1][out]);								// ∂a/∂z = σ'(z) = σ(z)*(1-σ(z)) = a*(1-a), derivative of activation function (sigmoid) 
 
 			for (int i = 0; i < weights[LAYERS - 2][0].length; i++) {
-				deltaW[LAYERS - 2][out][i] -= eta * (error[0][out] * neurons[LAYERS - 2][i]
-						+ lambda * weights[LAYERS - 2][out][i] / inputNumbers.length);
+				deltaW[LAYERS - 2][out][i] -= eta * (error[0][out] * neurons[LAYERS - 2][i]							//
+						+ lambda * weights[LAYERS - 2][out][i] / inputNumbers.length);								// 
 			}
 		}
 
@@ -133,13 +136,15 @@ public class NeuronNet implements Serializable {
 			error[0] = new double[NEURONS_IN_LAYERS[l]];
 			for (int j = 0; j < NEURONS_IN_LAYERS[l]; j++) {
 				for (int k = 0; k < NEURONS_IN_LAYERS[l + 1]; k++) {
-					error[0][j] += weights[l][k][j] * error[1][k];
+					error[0][j] += weights[l][k][j] * error[1][k];							// error (δ = ∂E/∂z) of the layer = Σ( w * error (δ) of next layer) ...
 				}
-				error[0][j] *= neurons[l][j] * (1 - neurons[l][j]);
-				for (int i = 0; i < weights[l - 1][0].length; i++) {
-					deltaW[l - 1][j][i] -= eta
-							* (error[0][j] * neurons[l - 1][i] + lambda * weights[l - 1][j][i] / inputNumbers.length);
-				}
+				error[0][j] *= neurons[l][j] * (1 - neurons[l][j]);							// ... * σ'(z) derivative of activation function (sigmoid) of the layer
+				for (int i = 0; i < weights[l - 1][0].length; i++) {						
+					deltaW[l - 1][j][i] -= eta	 											// ∂w = -η * [δ *a ...
+							* (error[0][j] * neurons[l - 1][i] +
+									//i==NEURONS_IN_LAYERS[l-1]? 0:								// not for biases, for weights only:
+								lambda * weights[l - 1][j][i] / inputNumbers.length); 		// ... + λ * w / n], derivative of L2-regularization factor
+				}																			
 			}
 		}
 
@@ -188,11 +193,10 @@ public class NeuronNet implements Serializable {
 								double minErr, double minDErr) {
 		
 		LOGGER.log(Level.FINE, "The selflearning of Net starting with:\nNumber of training sets of each digit: {0};\n"+ 
-								"Ofset in tranigbase: {1};\nNumber of epoches: {2};\nParametr eta: {3};\nThe size of a batch: {4};\n" +
-								"Parametr lambda: {5};\nThe minimal error of the Net: {6};\nThe minimal interval between last and next errors:{7}.",
+								"Ofset in tranigbase: {1};\nNumber of epoches: {2};\nParametr η (eta): {3};\nThe size of a batch: {4};\n" +
+								"Parametr λ (lambda): {5};\nThe minimal error of the Net: {6};\nThe minimal interval between last and next errors: {7}.",
 								new Object[]{numberOfTranigSets, ofset, epoches, eta, batchSize, lambda, minErr, minDErr});
 		
-		// double currErr = Short.MAX_VALUE;
 		double lastErr = 0;
 		double dErr = 0;
 		int epochN = 0;
@@ -205,13 +209,13 @@ public class NeuronNet implements Serializable {
 			batchSize = numberOfTranigSets * 10;
 		}
 
-		do { // epoch cycle
+		do { 																// epoch cycle
 			lastErr = currErr;
 			double reg = 0;
 			currErr = 0;
 			trueRes = 0;
-			Collections.shuffle(iNums);
-			for (int b = 0; b < (iInLength + batchSize); b += batchSize) { // batches iterations in input numbers set
+			Collections.shuffle(iNums);										
+			for (int b = 0; b < (iInLength + batchSize); b += batchSize) {	// batches iterations in input numbers set
 
 				// deltaWeight initialization
 				deltaW = new double[LAYERS - 1][][];
@@ -236,8 +240,7 @@ public class NeuronNet implements Serializable {
 			for (int i = 0; i < iNums.size(); i++) {
 				if (iNums.get(i)[iNums.get(i).length - 1] == getDigit(iNums.get(i))) {
 					trueRes++;
-				}
-				;
+				};
 			}
 
 			// real error
@@ -246,19 +249,19 @@ public class NeuronNet implements Serializable {
 			// error regularization
 			if (Math.abs(lambda) > Float.MIN_VALUE) {
 				for (int l = 0; l < (weights.length); l++) {
-					for (int m = 0; m < (weights[l].length); m++) {
-						for (int n = 0; n < (weights[l][m].length); n++) {
-							reg += weights[l][m][n] * weights[l][m][n];
-						}
+					for (int m = 0; m < (weights[l].length); m++) {					
+						for (int n = 0; n < (weights[l][m].length); n++) {			// length-1: only for weights, without biases!!!
+							reg += weights[l][m][n] * weights[l][m][n];					// L2 regularization = Σ(w²)  ...
+						}																
 					}
 				}
-				currErr += lambda * reg / (2 * iNums.size());
-			}
+				currErr += lambda * reg / (2 * iNums.size());							// ...  * λ/(2 * n), regularization factor, 
+			}																			// where λ is regularization parameter n is count of training sets
 
 			epochN++;
 			dErr = Math.abs(currErr - lastErr);
 			double procent = (double) trueRes * 100 / iNums.size();
-			LOGGER.log(Level.FINE, "Epoch # {0}; current error = {1}; delta error = {2}; reconation = {3}%",
+			LOGGER.log(Level.FINE, "Epoch # {0};\tcurrent E = {1};\tdelta E = {2}; reconation = {3}%",
 					new Object[] { epochN, currErr, dErr, procent });
 		} while (epochN < epoches && currErr > minErr && dErr >= minDErr);
 

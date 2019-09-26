@@ -10,7 +10,7 @@ public class Main {
 	public static void main(String[] args) {
 		LogController.configure();
 		Logger LOGGER =Logger.getLogger(NeuronNet.class.getName());
-		
+		LogController.on();
 		NeuronNet wts;
 		int i;
 		LOGGER.finest("Программа стартовала");
@@ -50,7 +50,7 @@ public class Main {
 			//wts.selfLearning(1000, 0, 100, 0.5, 10, 0.15, 0, 0); // 784 6 16 10 - 87,44%
 			//wts.selfLearning(1000, 0, 100, 0.5, 10, 0.15, 0, 0); // 784 16 16 10 - nnw5c - 98,06%
 			//wts.selfLearning(7000, 0, 100, 0.5, 10, 0.15, 0, 0); // 784 16 16 10 - 97,21%
-			wts.selfLearning(10, 0, 5, 0.5, 10, 0.15, 0, 0); // 
+			wts.selfLearning(1000, 0, 50, 0.5, 10, 0.15, 0, 0); // 
 
 			LOGGER.config("Done. Saved to the file.");
 			break;
@@ -59,7 +59,7 @@ public class Main {
 			sc.close();
 			LOGGER.config("Guessing...");
 			wts = NeuronNet.loadFromF();
-			int count = 70; // count of each number [0-9]
+			int count = 100; // count of each number [0-9]
 			//wts.loadInputNumbers(7000, 0);
 			wts.loadInputNumbers(count, 1200);
 			i=0;
