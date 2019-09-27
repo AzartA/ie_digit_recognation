@@ -15,7 +15,7 @@ import java.util.logging.*;
 
 
 /**
- * @version 6.2
+ * @version 6.3
  * @serial NEURONS_IN_LAYERS
  * @serial weights
  * @serial LAYERS
@@ -92,15 +92,6 @@ public class NeuronNet implements Serializable {
 		iInLength = inputNumbers.length;
 	}
 
-	public double[] computeOut(double[] inputNumber) {
-		double[] output;
-		output = Arrays.copyOf(inputNumber, inputNumber.length - 1);
-		for (int l = 0; l < LAYERS - 1; l++) { // for each level
-			output = MatrixMath.activateNeuron(output, weights[l]);
-		}
-		return output;
-	}
-
 	public int straightPropagation(double[] inputNumber) {
 		neurons = new double[LAYERS][];
 		neurons[0] = inputNumber.clone();
@@ -122,7 +113,7 @@ public class NeuronNet implements Serializable {
 		for (int out = 0; out < NEURONS_IN_LAYERS[LAYERS - 1]; out++) {
 			error[0][out] = out == idealNumber ? (neurons[LAYERS - 1][out] - 1.0) : (neurons[LAYERS - 1][out]);		// error δ (∂E/∂z) of last layer = a-t, derivative of error function (quadratic) 
 			currErr += error[0][out] * error[0][out] * 0.5;															// E = 1/2 * Σ(t-a)² error function (quadratic)
-			error[0][out] *= .derivative(neurons[LAYERS - 1][out]);								// ∂a/∂z = σ'(z) = σ(z)*(1-σ(z)) = a*(1-a), derivative of activation function (sigmoid) 
+			error[0][out] *= MatrixMath.set(neurons[LAYERS - 1][out]);								// ∂a/∂z = σ'(z) = σ(z)*(1-σ(z)) = a*(1-a), derivative of activation function (sigmoid) 
 
 			for (int i = 0; i < weights[LAYERS - 2][0].length; i++) {
 				deltaW[LAYERS - 2][out][i] -= eta * (error[0][out] * neurons[LAYERS - 2][i]							//

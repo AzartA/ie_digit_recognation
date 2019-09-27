@@ -5,11 +5,14 @@ package recognition;
  */
 
 public final class MatrixMath {
-	private static Algorithm algorithm;
+	private static Activation activ;
+	private static Cost error;
+	private static Regularization reg;
+	private static Initialization init;
 	
-	public static Algorithm setAlgo(Algorithm algo) {
-		algorithm = algo;
-		return algorithm;
+	public Activation set(Activation activ) {
+		activ = activ;
+	return activ;
 	}
 	
 	public static double [] activateNeuron (double [] vec, double [][] matrix) {
@@ -22,7 +25,7 @@ public final class MatrixMath {
 			for (int j = 0; j<matrix[0].length;j++){
 				resVec[i]+= vec[j]*matrix[i][j];
 			}
-			resVec[i] = algorithm.activate(resVec[i]);
+			resVec[i] = activ.func(resVec[i]);
 		}
 		return resVec;
 	}
