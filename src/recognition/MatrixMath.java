@@ -5,8 +5,15 @@ package recognition;
  */
 
 public final class MatrixMath {
+	private static Algorithm algorithm;
+	
+	public static Algorithm setAlgo(Algorithm algo) {
+		algorithm = algo;
+		return algorithm;
+	}
 	
 	public static double [] activateNeuron (double [] vec, double [][] matrix) {
+		
 		if(vec.length!=matrix[0].length) {
 			throw new IllegalArgumentException("Illegal length of vector");
 		}
@@ -15,25 +22,15 @@ public final class MatrixMath {
 			for (int j = 0; j<matrix[0].length;j++){
 				resVec[i]+= vec[j]*matrix[i][j];
 			}
-			resVec[i] = sigmoid(resVec[i]);
+			resVec[i] = algorithm.activate(resVec[i]);
 		}
 		return resVec;
-		
-	}
-	
-	// function of activation (sigmoid)
-	public static double sigmoid (double x) {
-	
-		return 1/(1+ Math.pow(Math.E, -x));
 	}
 	
 	
-	
-	public static double derivativeOfSigmoid (double x) {
-		
-		return sigmoid(x)*(1-sigmoid(x));
+	public static double getDerivative(double x) {
+		return algorithm.derivative(x);
 	}
-	
 	
 	
 	

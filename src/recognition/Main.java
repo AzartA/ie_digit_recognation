@@ -21,6 +21,7 @@ public class Main {
 				"3. Guess a number from  a text file\nYour choice: ");
 
 		int res = sc.nextInt();
+		MatrixMath.setAlgo(new Sigmoid());
 		switch (res) {
 		case 0:
 			LOGGER.fine("Typed: 0");
