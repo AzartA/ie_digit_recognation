@@ -22,6 +22,7 @@ public class RReLU extends Activation implements Serializable {
 	@Override
 	public double func(double neuron) {
 		return this.func(neuron, net.rand);
+		//return this.func(neuron, 1/mean);
 	}
 
 	private double func(double neuron, double random) {
