@@ -59,7 +59,7 @@ public class NeuronNet implements Serializable {
 			for (int i = 0; i < NEURONS_IN_LAYERS[l + 1]; i++) {
 				weights[l][i] = new double[NEURONS_IN_LAYERS[l] + 1];
 				for (int j = 0; j < NEURONS_IN_LAYERS[l] + 1; j++) {
-					weights[l][i][j] = rd.nextGaussian();//0.04472135954999579392818347337463;
+					weights[l][i][j] = rd.nextGaussian();
 				}
 			}
 		}
@@ -78,8 +78,6 @@ public class NeuronNet implements Serializable {
 		
 	}
 	
-	
-
 	public void setActivation(Activation activ) {
 		this.activ = activ;
 		activ.net = this;

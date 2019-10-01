@@ -13,7 +13,6 @@ public class Main {
 		LogController.on();
 		NeuronNet wts;
 		int i;
-		LOGGER.finest("Программа стартовала");
 		Scanner sc = new Scanner(System.in);
 		LOGGER.config("0. Prepare training samples for learning.\n" +
 				"1. Learn the network\n" + 
@@ -44,14 +43,13 @@ public class Main {
 			}
 			line = line.replace(" ", ", ");
 			LOGGER.log(Level.FINE, "New Neuron Net with {0} neurons in the layers.", line);
-			int numberOfTraningSets = 1000;
+			int numberOfTraningSets = 10000;
 			
 			wts = new NeuronNet(neurons);
 			LOGGER.config("Choose an activation function:\n" + 
 					"1. Sigmoid\n" +
 					"2. Hyperbolic tangent\n" + 
-					"3. RReLu\n" + 
-					"4. SoftMax\nYour choice:");
+					"3. RReLu\nYour choice:");
 				switch (sc.nextInt()) {
 				case 1:
 					LOGGER.fine("Typed: 1");
@@ -65,9 +63,7 @@ public class Main {
 				
 				case 3:
 					LOGGER.fine("Typed: 3");
-					//wts = new NeuronNet(numberOfTraningSets, neurons);
 					wts.setActivation(new RReLU(3,8,numberOfTraningSets));
-					
 					break;
 				}	
 				sc.close();
@@ -78,7 +74,7 @@ public class Main {
 			//wts.selfLearning(1000, 0, 100, 0.5, 10, 0.15, 0, 0); // 784 6 16 10 - 87,44%
 			//wts.selfLearning(1000, 0, 100, 0.5, 10, 0.15, 0, 0); // 784 16 16 10 - nnw5c - 98,06%
 			//wts.selfLearning(7000, 0, 100, 0.5, 10, 0.15, 0, 0); // 784 16 16 10 - 97,21%
-			wts.selfLearning(numberOfTraningSets/10, 0, 20, 0.5, 10, 0.15, 0, 0); // 
+			wts.selfLearning(numberOfTraningSets/10, 0, 100, 0.5, 10, 0.15, 0, 0); // 
 
 			LOGGER.config("Done. Saved to the file.");
 			break;
@@ -88,9 +84,8 @@ public class Main {
 			LOGGER.config("Guessing...");
 			wts = NeuronNet.loadFromF();
 			LOGGER.log(Level.FINEST, "The Net with {0} neurons, {1} activation function.", new Object[] {wts.getNeurons(), wts.getActivationClassName()});
-			int count = 1000; // count of each number [0-9]
-			//wts.loadInputNumbers(7000, 0);
-			wts.loadInputNumbers(count, 1200);
+			int count = 7000; // count of each number [0-9]
+			wts.loadInputNumbers(count, 0);
 			i=0;
 			for(int u = 0; u<count*10;u++) {
 				if((int)wts.inputNumbers[u][wts.inputNumbers[0].length-1]==wts.getDigit(wts.inputNumbers[u])) {
@@ -115,7 +110,6 @@ public class Main {
 			LOGGER.log(Level.FINE, "Typed: {0}", res);
 			sc.close();
 			LOGGER.config("Unknown comand.");
-			LOGGER.finest("Программа закончилась\nСчастливо оставаться!");
 			break;
 		}
 	}
