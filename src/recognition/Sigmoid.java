@@ -1,7 +1,9 @@
 package recognition;
 
-public class Sigmoid extends Activation {
+import java.io.Serializable;
 
+public class Sigmoid extends Activation implements Serializable {
+	private static final long serialVersionUID = 328779L;
 	@Override
 	public double func(double x) {
 		return 1/(1+ Math.pow(Math.E, -x));

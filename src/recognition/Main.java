@@ -21,7 +21,7 @@ public class Main {
 				"3. Guess a number from  a text file\nYour choice: ");
 
 		int res = sc.nextInt();
-		MatrixMath.setAlgo(new Sigmoid());
+		
 		switch (res) {
 		case 0:
 			LOGGER.fine("Typed: 0");
@@ -33,25 +33,52 @@ public class Main {
 			int[] neurons;
 			LOGGER.config("Enter the sizes of the layers: ");
 			String line= "";
-			while (sc.hasNextLine()) {
+			sc.nextLine(); 								// omit the \n which nextInt() leaves.
 			line = sc.nextLine();
-			}
-			sc.close();
+						
 			String[] nums = line.split(" ");
 			neurons = new int[nums.length];
-			LOGGER.config("Learning...  ");
+			
 			for (i=0;i<nums.length; i++) {
 				neurons[i] = Integer.valueOf(nums[i]);
 			}
 			line = line.replace(" ", ", ");
 			LOGGER.log(Level.FINE, "New Neuron Net with {0} neurons in the layers.", line);
+			int numberOfTraningSets = 1000;
+			
 			wts = new NeuronNet(neurons);
+			LOGGER.config("Choose an activation function:\n" + 
+					"1. Sigmoid\n" +
+					"2. Hyperbolic tangent\n" + 
+					"3. RReLu\n" + 
+					"4. SoftMax\nYour choice:");
+				switch (sc.nextInt()) {
+				case 1:
+					LOGGER.fine("Typed: 1");
+					wts.setActivation(new Sigmoid());
+					break;
+				
+				case 2:
+					LOGGER.fine("Typed: 2");
+					wts.setActivation(new HyperTang());
+					break;
+				
+				case 3:
+					LOGGER.fine("Typed: 3");
+					//wts = new NeuronNet(numberOfTraningSets, neurons);
+					wts.setActivation(new RReLU(3,8,numberOfTraningSets));
+					
+					break;
+				}	
+				sc.close();
+			
+			LOGGER.config("Learning...  ");
 			//wts.selfLearning(1000, 0, 1, 0.5, 10, 0.15, 0, 0); // 784 16 16 10 - 46,12%
 			//wts.selfLearning(1000, 0, 30, 0.5, 10, 0.15, 0, 0); // 784 16 16 10 - 94,3% 
 			//wts.selfLearning(1000, 0, 100, 0.5, 10, 0.15, 0, 0); // 784 6 16 10 - 87,44%
 			//wts.selfLearning(1000, 0, 100, 0.5, 10, 0.15, 0, 0); // 784 16 16 10 - nnw5c - 98,06%
 			//wts.selfLearning(7000, 0, 100, 0.5, 10, 0.15, 0, 0); // 784 16 16 10 - 97,21%
-			wts.selfLearning(1000, 0, 50, 0.5, 10, 0.15, 0, 0); // 
+			wts.selfLearning(numberOfTraningSets/10, 0, 20, 0.5, 10, 0.15, 0, 0); // 
 
 			LOGGER.config("Done. Saved to the file.");
 			break;
@@ -60,7 +87,8 @@ public class Main {
 			sc.close();
 			LOGGER.config("Guessing...");
 			wts = NeuronNet.loadFromF();
-			int count = 100; // count of each number [0-9]
+			LOGGER.log(Level.FINEST, "The Net with {0} neurons, {1} activation function.", new Object[] {wts.getNeurons(), wts.getActivationClassName()});
+			int count = 1000; // count of each number [0-9]
 			//wts.loadInputNumbers(7000, 0);
 			wts.loadInputNumbers(count, 1200);
 			i=0;
@@ -72,6 +100,7 @@ public class Main {
 			}
 			
 			LOGGER.config(String.format("The network prediction accuracy: %1$d/%2$d, %3$.2f%3$%", i, count*10, (double)i*100/(count*10)));
+			
 			break;
 		case 3:	
 			LOGGER.fine("Typed: 3");
@@ -87,7 +116,7 @@ public class Main {
 			sc.close();
 			LOGGER.config("Unknown comand.");
 			LOGGER.finest("Программа закончилась\nСчастливо оставаться!");
-
+			break;
 		}
 	}
 

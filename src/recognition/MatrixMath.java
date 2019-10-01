@@ -5,17 +5,8 @@ package recognition;
  */
 
 public final class MatrixMath {
-	private static Activation activ;
-	private static Cost error;
-	private static Regularization reg;
-	private static Initialization init;
-	
-	public Activation set(Activation activ) {
-		activ = activ;
-	return activ;
-	}
-	
-	public static double [] activateNeuron (double [] vec, double [][] matrix) {
+		
+	public static double [] activateNeuron (double [] vec, double [][] matrix, Activation activ) {
 		
 		if(vec.length!=matrix[0].length) {
 			throw new IllegalArgumentException("Illegal length of vector");
@@ -30,10 +21,8 @@ public final class MatrixMath {
 		return resVec;
 	}
 	
+
 	
-	public static double getDerivative(double x) {
-		return algorithm.derivative(x);
-	}
 	
 	
 	

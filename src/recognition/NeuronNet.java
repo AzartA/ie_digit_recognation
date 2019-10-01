@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.StringJoiner;
 import java.util.logging.*;
 
 
@@ -31,6 +32,15 @@ public class NeuronNet implements Serializable {
 	transient public int iInLength;
 	transient private double[][] neurons;
 	transient private double currErr;
+	transient private Random rd;
+	transient double rand;
+	
+	private RReLU relu;
+	private Activation activ;
+	//private Cost error;
+	//private Regularization regFunc;
+	//private Initialization init;
+	
 	protected static final Logger LOGGER = Logger.getLogger(NeuronNet.class.getName());
 	
 	
@@ -43,20 +53,54 @@ public class NeuronNet implements Serializable {
 		LAYERS = neuronsInLayers.length;
 		NEURONS_IN_LAYERS = neuronsInLayers.clone();
 		weights = new double[LAYERS - 1][][];
-		Random rd = new Random(328778L);
+		rd = new Random(328778L);
 		for (int l = 0; l < (LAYERS - 1); l++) {
 			weights[l] = new double[NEURONS_IN_LAYERS[l + 1]][];
 			for (int i = 0; i < NEURONS_IN_LAYERS[l + 1]; i++) {
 				weights[l][i] = new double[NEURONS_IN_LAYERS[l] + 1];
 				for (int j = 0; j < NEURONS_IN_LAYERS[l] + 1; j++) {
-					weights[l][i][j] = rd.nextGaussian();
+					weights[l][i][j] = rd.nextGaussian();//0.04472135954999579392818347337463;
 				}
 			}
 		}
 		
 	}
-
 	
+	private void SetWeights(int numberOfTrainingSets) {
+		
+		for (int l = 0; l < (LAYERS - 1); l++) {
+			for (int i = 0; i < NEURONS_IN_LAYERS[l + 1]; i++) {
+				for (int j = 0; j < NEURONS_IN_LAYERS[l] + 1; j++) {
+					weights[l][i][j] = rd.nextGaussian()*Math.sqrt(2.0/(numberOfTrainingSets));//0.04472135954999579392818347337463;
+				}
+			}
+		}
+		
+	}
+	
+	
+
+	public void setActivation(Activation activ) {
+		this.activ = activ;
+		activ.net = this;
+		if ("RReLU".equals(getActivationClassName())){
+			relu = (RReLU)activ;
+			SetWeights(relu.numberOfTrainingSets);
+		}
+	}
+	
+	public String getActivationClassName() {
+		String[] s = activ.getClass().getName().split("\\.");
+		return s[s.length-1];
+	}
+	
+	public String getNeurons() {
+		StringJoiner joiner = new StringJoiner(", ");
+		for (int i : NEURONS_IN_LAYERS) {
+			joiner.add(Integer.toString(i));
+		}
+		return joiner.toString();
+	}
 
 	
 	public void saveToF() {
@@ -97,7 +141,9 @@ public class NeuronNet implements Serializable {
 		neurons[0] = inputNumber.clone();
 		neurons[0][inputNumber.length - 1] = 1.0;											// bias multiplier
 		for (int l = 0; l < LAYERS - 1; l++) {
-			neurons[l + 1] = MatrixMath.activateNeuron(neurons[l], weights[l]);
+			
+				neurons[l + 1] = MatrixMath.activateNeuron(neurons[l], weights[l], activ);
+			
 			if (l != LAYERS - 2) {
 				neurons[l + 1] = Arrays.copyOf(neurons[l + 1], neurons[l + 1].length + 1);
 				neurons[l + 1][neurons[l + 1].length - 1] = 1.0;
@@ -112,8 +158,8 @@ public class NeuronNet implements Serializable {
 		error[0] = new double[NEURONS_IN_LAYERS[LAYERS - 1]];
 		for (int out = 0; out < NEURONS_IN_LAYERS[LAYERS - 1]; out++) {
 			error[0][out] = out == idealNumber ? (neurons[LAYERS - 1][out] - 1.0) : (neurons[LAYERS - 1][out]);		// error δ (∂E/∂z) of last layer = a-t, derivative of error function (quadratic) 
-			currErr += error[0][out] * error[0][out] * 0.5;															// E = 1/2 * Σ(t-a)² error function (quadratic)
-			error[0][out] *= MatrixMath.set(neurons[LAYERS - 1][out]);								// ∂a/∂z = σ'(z) = σ(z)*(1-σ(z)) = a*(1-a), derivative of activation function (sigmoid) 
+			currErr += error[0][out] * error[0][out] * 0.5;															// E = 1/2 * Σ(t-a)² error function (quadratic) ((t-a)² = (a-t)²)
+			error[0][out] *= activ.deriv(neurons[LAYERS - 1][out]);								// ∂a/∂z = σ'(z) = σ(z)*(1-σ(z)) = a*(1-a), derivative of activation function (sigmoid) 
 
 			for (int i = 0; i < weights[LAYERS - 2][0].length; i++) {
 				deltaW[LAYERS - 2][out][i] -= eta * (error[0][out] * neurons[LAYERS - 2][i]							//
@@ -129,7 +175,7 @@ public class NeuronNet implements Serializable {
 				for (int k = 0; k < NEURONS_IN_LAYERS[l + 1]; k++) {
 					error[0][j] += weights[l][k][j] * error[1][k];							// error (δ = ∂E/∂z) of the layer = Σ( w * error (δ) of next layer) ...
 				}
-				error[0][j] *= neurons[l][j] * (1 - neurons[l][j]);							// ... * σ'(z) derivative of activation function (sigmoid) of the layer
+				error[0][j] *= activ.deriv(neurons[l][j]);							// ... * σ'(z) derivative of activation function (sigmoid) of the layer
 				for (int i = 0; i < weights[l - 1][0].length; i++) {						
 					deltaW[l - 1][j][i] -= eta	 											// ∂w = -η * [δ *a ...
 							* (error[0][j] * neurons[l - 1][i] +
@@ -169,8 +215,11 @@ public class NeuronNet implements Serializable {
 	public int getDigit(double[] inNeurons) {
 		int digit = -1;
 		double bestRes = -1000.0;
+		if (!(relu==null)){
+			rand = 1/relu.getMean();
+		}
 		straightPropagation(inNeurons);
-
+		
 		for (int i = 0; i < NEURONS_IN_LAYERS[LAYERS - 1]; i++) {
 			if (neurons[LAYERS - 1][i] > bestRes) {
 				bestRes = neurons[LAYERS - 1][i];
@@ -195,12 +244,19 @@ public class NeuronNet implements Serializable {
 		LOGGER.fine("Learning...");
 		loadInputNumbers(numberOfTranigSets, ofset);
 		List<double[]> iNums = Arrays.asList(inputNumbers);
-
+		
 		if (batchSize < 1 || batchSize > (numberOfTranigSets * 10)) {
 			batchSize = numberOfTranigSets * 10;
 		}
 
 		do { 																// epoch cycle
+			
+			if (!(relu==null)){
+				
+				rand = rd.nextDouble();
+				rand=rand*(1/relu.getMinOfDist()-1/relu.getMaxOfDist())+1/relu.getMaxOfDist();
+			}
+			
 			lastErr = currErr;
 			double reg = 0;
 			currErr = 0;
@@ -252,7 +308,7 @@ public class NeuronNet implements Serializable {
 			epochN++;
 			dErr = Math.abs(currErr - lastErr);
 			double procent = (double) trueRes * 100 / iNums.size();
-			LOGGER.log(Level.FINE, "Epoch # {0};\tcurrent E = {1};\tdelta E = {2}; reconation = {3}%",
+			LOGGER.log(Level.FINE, "Epoch # {0};\tcurrent E = {1};\tdelta E = {2}; recognition = {3}%",
 					new Object[] { epochN, currErr, dErr, procent });
 		} while (epochN < epoches && currErr > minErr && dErr >= minDErr);
 
