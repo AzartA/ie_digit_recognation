@@ -27,7 +27,7 @@ public class Assets implements Serializable {
 	public transient int[][] inputSamples = new int [70000][785];
 	private transient int[] countOfInputSamples = new int[10];
 	private transient int n=-1;
-	protected static final Logger LOGGER = Logger.getLogger(NeuronNet.class.getName());
+	protected static final Log LOGGER =Log.get("Assets");
 	
 	public Assets() {
 		//LOGGER.setLevel(Level.INFO);
@@ -35,7 +35,8 @@ public class Assets implements Serializable {
 	
 	
 	public void fillTrainingSamples () {
-		LOGGER.config("Reading...");
+		
+		LOGGER.menu("Reading...");
 		try(FileSystem zipFileSys = FileSystems.newFileSystem(ZIP_PATH, null)) {
 			
 			for(Path path:zipFileSys.getRootDirectories()) {
