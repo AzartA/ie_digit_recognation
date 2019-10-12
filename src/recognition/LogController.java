@@ -6,10 +6,11 @@ import java.util.logging.*;
 
 
 public class LogController {
-	static final Logger LOGGER = Logger.getLogger(NeuronNet.class.getName());
+	static final Log LOGGER = Log.getLogger();
 	static Handler handler = new MyConsoleHandler();
 	static Handler fhandler;
 	static Formatter myFormatter;
+	public static Level MENU = new Level("MENU", 200) {};
 	static { 
 		myFormatter = new SimpleFormatter() {
 			private static final String format = "%1$7s: %2$td.%<tm.%<ty %<tT  %3$s (%4$s - %5$s)%n";
@@ -38,7 +39,7 @@ public class LogController {
 		
 	}
 	public static void configure(){
-		handler.setLevel(Level.CONFIG);
+		handler.setLevel(MENU);
 		LOGGER.addHandler(handler);
 		fhandler.setLevel(Level.ALL);
 		fhandler.setFormatter(myFormatter);
@@ -69,7 +70,7 @@ public class LogController {
 	public static void on () {
 		setLevel("ALL","file");
 		setLevel("ALL","console");
-		LOGGER.finest("Logger is ON");
+		LOGGER.f("Logger is ON");
 	}
 	
 	public static void off () {
@@ -78,146 +79,156 @@ public class LogController {
 	}
 }
 
-final class Log {
-	private Logger LOGGER;
-	private Level MENU;
-	private String className;
+final class Log extends Logger{
 	
-	public static Log get(Class<?> clazz) {
-		    return new Log(clazz);
-	}
-
-	private Log(Class<?> clazz) {
-		this.className = clazz.getName();
-		LOGGER = Logger.getLogger(clazz.getName());
-		MENU = new Level("MENU", 200) {};
-	}
 	
-	public static Log get(String statClass) {
-	    return new Log(statClass);
-}
-
-	private Log(String statClass) {
-		this.className = statClass;
-		LOGGER = Logger.getLogger(statClass);
-		MENU = new Level("MENU", 200) {};
-	}
+	private static String className;
 	
+	private Log (String statClass, String resourceBundleName) {
+		super(statClass,resourceBundleName);
+	}	
+	
+	public static Log getLogger(){
+		LogManager manager = LogManager.getLogManager();
+		Log l = (Log) manager.getLogger("LOGGER");
+        if (l == null) {
+            l = new Log("LOGGER", null);
+            manager.addLogger(l);
+        }
+        return l;
+	}
+	public static Log getLogger(String name){
+		className = name;
+		return LogController.LOGGER;
+	}
+		
 	//---  log set  -----------
-	public void log(Level level, String msg) {
-		LOGGER.logp(level, className, "?", msg);
+	
+	public void l(Level level, String msg) {
+		super.logp(level, className, "?", msg);
 	}
 	
-	public void log(Level level, String methodName, String msg) {
+	public void l(Level level, String methodName, String msg) {
 		if(methodName.contains("{")) {
-			LOGGER.logp(level, className, "?", methodName, msg);
+			super.logp(level, className, "?", methodName, msg);
 		}else {
-			LOGGER.logp(level, className, methodName, msg);
+			super.logp(level, className, methodName, msg);
 		}
 	}
 	
-	public void log(Level level, String msg, Object param) {
-		LOGGER.logp(level, className, "?", msg, param);
+	public void l(Level level, String msg, Object param) {
+		super.logp(level, className, "?", msg, param);
     }
 	
-	public void log(Level level, String methodName, String msg, Object param) {
-		LOGGER.logp(level, className, methodName, msg, param);
+	public void l(Level level, String methodName, String msg, Object param) {
+		super.logp(level, className, methodName, msg, param);
     }
 	
-	public void log(Level level, String msg, Object [] params) {
-		LOGGER.logp(level, className, "?", msg, params);
+	public void l(Level level, String msg, Object [] params) {
+		super.logp(level, className, "?", msg, params);
     }
 	
-	public void log(Level level, String methodName, String msg, Object [] params) {
-		LOGGER.logp(level, className, methodName, msg, params);
+	public void l(Level level, String methodName, String msg, Object [] params) {
+		super.logp(level, className, methodName, msg, params);
     }
 	
 	//---  debag set  -----------
 	public void d(String msg) {
-        log(Level.FINE, msg);
+        l(Level.FINE, msg);
     }
 	
 	public void d(String methodName, String msg) {
 		if(methodName.contains("{")) {
-			LOGGER.logp(Level.FINE, className, "?", methodName, msg);
+			super.logp(Level.FINE, className, "?", methodName, msg);
 		}else {
-			log(Level.FINE, className, methodName, msg);
+			l(Level.FINE, className, methodName, msg);
 		}
     }
 	
 	public void d(String msg, Object param) {
-		LOGGER.logp(Level.FINE, className, "?", msg, param);
+		super.logp(Level.FINE, className, "?", msg, param);
     }
 	
 	public void d(String methodName, String msg, Object param) {
-		LOGGER.logp(Level.FINE, className, methodName, msg, param);
+		super.logp(Level.FINE, className, methodName, msg, param);
     }
 	
 	public void d(String msg, Object [] params) {
-		LOGGER.logp(Level.FINE, className, "?", msg, params);
+		super.logp(Level.FINE, className, "?", msg, params);
     }
 	
 	public void d(String methodName, String msg, Object [] params) {
-		LOGGER.logp(Level.FINE, className, methodName, msg, params);
+		super.logp(Level.FINE, className, methodName, msg, params);
     }
 	
 	//---  finest set  -----------
 	public void f(String msg) {
-        log(Level.FINEST, msg);
+        l(Level.FINEST, msg);
     }
 	
-	public void f(String msg, String className, String methodName) {
-        log(Level.FINEST, className, methodName, msg);
+	public void f(String methodName, String msg ) {
+        l(Level.FINEST, className, methodName, msg);
     }
 	
 	//---  text only set  -----------
 	public void t(String msg) {
-        log(MENU, msg);
+        l(LogController.MENU, msg);
     }
 	
-	public void t(String msg, String methodName) {
-        log(MENU, className, methodName, msg);
+	public void t(String methodName, String msg) {
+        l(LogController.MENU, methodName, msg);
     }
 	
+	public void t(String msg, Object param) {
+        l(LogController.MENU, msg, param);
+    }
 	
+	public void t(String methodName,  String msg, Object param) {
+        l(LogController.MENU, methodName, msg, param);
+    }
 	
+	public void t(String msg, Object[] params) {
+        l(LogController.MENU, msg, params);
+    }
 	
-	
+	public void t(String methodName, String msg, Object[] params) {
+        l(LogController.MENU, methodName, msg, params);
+    }
 	
 	//---  config set  -----------
 	public void c(String msg) {
-        log(Level.CONFIG, msg);
+        l(Level.CONFIG, msg);
     }
 	
-	public void c(String msg, String className, String methodName) {
-        log(Level.CONFIG, className, methodName, msg);
+	public void c(String methodName, String msg) {
+        l(Level.CONFIG, methodName, msg);
     }
 	
 	//---  warning set  -----------
 	public void w(String msg) {
-        log(Level.WARNING, msg);
+        l(Level.WARNING, msg);
     }
 	
-	public void w(String msg, String className, String methodName) {
-        log(Level.WARNING, className, methodName, msg);
+	public void w(String methodName, String msg) {
+        l(Level.WARNING, methodName, msg);
     }
 	
 	//---  info set  -----------
 	public void i(String msg) {
-        log(Level.INFO, msg);
+        l(Level.INFO, msg);
     }
 	
-	public void i(String msg, String className, String methodName) {
-        log(Level.INFO, className, methodName, msg);
+	public void i(String methodName, String msg) {
+        l(Level.INFO, methodName, msg);
     }
 	
 	//---  severe set  -----------
 	public void e(String msg) {
-        log(Level.SEVERE, msg);
+        l(Level.SEVERE, msg);
     }
 	
-	public void e(String msg, String className, String methodName) {
-        log(Level.SEVERE, className, methodName, msg);
+	public void e(String methodName, String msg) {
+        l(Level.SEVERE, methodName, msg);
     }
 	
 	

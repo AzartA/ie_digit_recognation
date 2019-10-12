@@ -9,7 +9,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		LogController.configure();
-		Log LOGGER = Log.get("Main");
+		Log LOGGER = Log.getLogger("Main");
 		LogController.on();
 		NeuronNet wts;
 		int i;
@@ -30,7 +30,7 @@ public class Main {
 		case 1:
 			LOGGER.d("Typed: 1");
 			int[] neurons;
-//			LOGGER.menu("Enter the sizes of the layers: ");
+			LOGGER.t("Enter the sizes of the layers: ");
 			String line= "";
 			sc.nextLine(); 								// omit the \n which nextInt() leaves.
 			line = sc.nextLine();
@@ -43,47 +43,47 @@ public class Main {
 			}
 			line = line.replace(" ", ", ");
 			LOGGER.d("New Neuron Net with {0} neurons in the layers.", line);
-			int numberOfTraningSets = 10000;
+			int numberOfTraningSets = 1000;
 			
 			wts = new NeuronNet(neurons);
-//			LOGGER.menu("Choose an activation function:\n" + 
-//					"1. Sigmoid\n" +
-//					"2. Hyperbolic tangent\n" + 
-//					"3. RReLu\nYour choice:");
+			LOGGER.t("Choose an activation function:\n" + 
+					"1. Sigmoid\n" +
+					"2. Hyperbolic tangent\n" + 
+					"3. RReLu\nYour choice:");
 				switch (sc.nextInt()) {
 				case 1:
-					LOGGER.fine("Typed: 1");
+					LOGGER.d("Typed: 1");
 					wts.setActivation(new Sigmoid());
 					break;
 				
 				case 2:
-					LOGGER.fine("Typed: 2");
+					LOGGER.d("Typed: 2");
 					wts.setActivation(new HyperTang());
 					break;
 				
 				case 3:
-					LOGGER.fine("Typed: 3");
+					LOGGER.d("Typed: 3");
 					wts.setActivation(new RReLU(3,8,numberOfTraningSets));
 					break;
 				}	
 				sc.close();
 			
-//			LOGGER.menu("Learning...  ");
+			LOGGER.t("Learning...  ");
 			//wts.selfLearning(1000, 0, 1, 0.5, 10, 0.15, 0, 0); // 784 16 16 10 - 46,12%
 			//wts.selfLearning(1000, 0, 30, 0.5, 10, 0.15, 0, 0); // 784 16 16 10 - 94,3% 
 			//wts.selfLearning(1000, 0, 100, 0.5, 10, 0.15, 0, 0); // 784 6 16 10 - 87,44%
 			//wts.selfLearning(1000, 0, 100, 0.5, 10, 0.15, 0, 0); // 784 16 16 10 - nnw5c - 98,06%
 			//wts.selfLearning(7000, 0, 100, 0.5, 10, 0.15, 0, 0); // 784 16 16 10 - 97,21%
-			wts.selfLearning(numberOfTraningSets/10, 0, 100, 0.5, 10, 0.15, 0, 0); // 
+			wts.selfLearning(numberOfTraningSets/10, 0, 10, 0.5, 10, 0.15, 0, 0); // 
 
-//			LOGGER.menu("Done. Saved to the file.");
+			LOGGER.t("Done. Saved to the file.");
 			break;
 		case 2:
-			LOGGER.fine("Typed: 2");
+			LOGGER.d("Typed: 2");
 			sc.close();
-//			LOGGER.menu("Guessing...");
+			LOGGER.t("Guessing...");
 			wts = NeuronNet.loadFromF();
-			LOGGER.log(Level.FINEST, "The Net with {0} neurons, {1} activation function.", new Object[] {wts.getNeurons(), wts.getActivationClassName()});
+			LOGGER.d("The Net with {0} neurons, {1} activation function.", new Object[] {wts.getNeurons(), wts.getActivationClassName()});
 			int count = 7000; // count of each number [0-9]
 			wts.loadInputNumbers(count, 0);
 			i=0;
@@ -94,22 +94,22 @@ public class Main {
 				
 			}
 			
-//			LOGGER.menu(String.format("The network prediction accuracy: %1$d/%2$d, %3$.2f%3$%", i, count*10, (double)i*100/(count*10)));
+			LOGGER.t(String.format("The network prediction accuracy: %1$d/%2$d, %3$.2f%3$%", i, count*10, (double)i*100/(count*10)));
 			
 			break;
 		case 3:	
-			LOGGER.fine("Typed: 3");
-//			LOGGER.menu("Enter filename:");
+			LOGGER.d("Typed: 3");
+			LOGGER.t("Enter filename:");
 			String file = sc.next();
 			sc.close();
 			wts = NeuronNet.loadFromF();
 			Assets as = new Assets();
-//			LOGGER.menu("The number is " + wts.getDigit(as.getinputSample(file)));
+			LOGGER.t("The number is " + wts.getDigit(as.getinputSample(file)));
 			break;
 		default:
 			LOGGER.d("Typed: {0}", res);
 			sc.close();
-//			LOGGER.menu("Unknown comand.");
+			LOGGER.t("Unknown comand.");
 			break;
 		}
 	}

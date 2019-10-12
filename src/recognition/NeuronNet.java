@@ -16,7 +16,7 @@ import java.util.logging.*;
 
 
 /**
- * @version 6.3
+ * @version 7.0
  * @serial NEURONS_IN_LAYERS
  * @serial weights
  * @serial LAYERS
@@ -41,7 +41,7 @@ public class NeuronNet implements Serializable {
 	//private Regularization regFunc;
 	//private Initialization init;
 	
-	protected static final Logger LOGGER = Logger.getLogger(NeuronNet.class.getName());
+	protected static final Log LOGGER = Log.getLogger("NeuronNet");
 	
 	
 
@@ -105,7 +105,7 @@ public class NeuronNet implements Serializable {
 
 		try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("nnw5a.bin"))) {
 			out.writeObject(this);
-			LOGGER.fine("Saved successfully.");
+			LOGGER.d("saveToF","Saved successfully.");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -117,7 +117,7 @@ public class NeuronNet implements Serializable {
 			NeuronNet net = new NeuronNet();
 			net = (NeuronNet) in.readObject();
 			// this.setWeights(net.getWeights());
-			LOGGER.fine("Loaded successfully.");
+			LOGGER.d("loadFromF", "Loaded successfully.");
 			return net;
 		} catch (ClassNotFoundException | IOException e) {
 			e.printStackTrace();
@@ -129,7 +129,7 @@ public class NeuronNet implements Serializable {
 	public void loadInputNumbers(int countOfSamplesOfANumber, int startIndex) {
 		Assets as = new Assets(); // load input numbers
 		as = as.loadFromF();
-		LOGGER.finest("loaded");
+		LOGGER.f("loadInputNumbers", "loaded");
 		inputNumbers = as.createTraningSet(countOfSamplesOfANumber, startIndex);
 		iInLength = inputNumbers.length;
 	}
@@ -230,11 +230,10 @@ public class NeuronNet implements Serializable {
 	public void selfLearning(int numberOfTranigSets, int ofset, int epoches, double eta, int batchSize, double lambda,
 								double minErr, double minDErr) {
 		
-		LOGGER.log(Level.FINE, "The selflearning of Net starting with:\nNumber of training sets of each digit: {0};\n"+ 
+		LOGGER.d("selfLearning", "The selflearning of Net starting with:\nNumber of training sets of each digit: {0};\n"+ 
 								"Ofset in tranigbase: {1};\nNumber of epoches: {2};\nParametr η (eta): {3};\nThe size of a batch: {4};\n" +
 								"Parametr λ (lambda): {5};\nThe minimal error of the Net: {6};\nThe minimal interval between last and next errors: {7}.",
 								new Object[]{numberOfTranigSets, ofset, epoches, eta, batchSize, lambda, minErr, minDErr});
-		
 		double lastErr = 0;
 		double dErr = 0;
 		int epochN = 0;
@@ -306,12 +305,12 @@ public class NeuronNet implements Serializable {
 			epochN++;
 			dErr = Math.abs(currErr - lastErr);
 			double procent = (double) trueRes * 100 / iNums.size();
-			LOGGER.log(Level.FINE, "Epoch # {0};\tcurrent E = {1};\tdelta E = {2}; recognition = {3}%",
+			LOGGER.d("selfLearning", "Epoch # {0};\tcurrent E = {1};\tdelta E = {2}; recognition = {3}%",
 					new Object[] { epochN, currErr, dErr, procent });
 		} while (epochN < epoches && currErr > minErr && dErr >= minDErr);
 
 		saveToF();
-		LOGGER.fine("Saved to a file.");
+		LOGGER.d("selfLearning", "Saved to a file.");
 
 	}
 

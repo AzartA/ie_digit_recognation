@@ -16,13 +16,15 @@ import java.util.logging.SimpleFormatter;
 
 public class MyConsoleHandler extends Handler {
 	private static String color = Color.BLACK.toString();
+	private static String msgColor = Color.BLACK.toString();
 	protected String formata;
 	private Formatter formatter = new SimpleFormatter() {
 		@Override
 		public String format(LogRecord record) {
 			String source;
 			if(record.getLevel().intValue() >= Level.WARNING.intValue()) {
-	            color = Color.RED.toString();
+	            color = Color.RED_BOLD.toString();
+	            msgColor = color;
 	        }else if(record.getLevel().intValue() < Level.INFO.intValue()) {
 	        	color = Color.GREEN.toString();
 	        }else {
@@ -30,7 +32,7 @@ public class MyConsoleHandler extends Handler {
 	        }
 			
 			formata = color + "%1$7s:" + Color.BLUE.toString() + " %2$td.%<tm.%<ty %2$tT " + 
-		            Color.RESET.toString() + "%3$s " + Color.BLUE.toString() + "(%4$s)" + Color.RESET.toString();
+					msgColor + "%3$s " + Color.BLUE.toString() + "(%4$s)" + Color.RESET.toString();
 			if (record.getSourceClassName() != null) {
 	            source = record.getSourceClassName();
 	            if (record.getSourceMethodName() != null) {
@@ -71,11 +73,11 @@ public class MyConsoleHandler extends Handler {
             return;
         }
 		
-		if(record.getLevel().intValue() < Level.WARNING.intValue()) {
+		//if(record.getLevel().intValue() < Level.WARNING.intValue()) {
             System.out.println(msg);
-        }else {
-        	System.err.println(msg);
-        }
+       // }else {
+       // 	System.err.println(msg);
+       // }
 
     }
 

@@ -15,8 +15,7 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 
 public class Assets implements Serializable {
 	private static final long serialVersionUID = 328779L;
@@ -27,7 +26,7 @@ public class Assets implements Serializable {
 	public transient int[][] inputSamples = new int [70000][785];
 	private transient int[] countOfInputSamples = new int[10];
 	private transient int n=-1;
-	protected static final Log LOGGER =Log.get("Assets");
+	protected static final Log LOGGER =Log.getLogger("Assets");
 	
 	public Assets() {
 		//LOGGER.setLevel(Level.INFO);
@@ -36,7 +35,7 @@ public class Assets implements Serializable {
 	
 	public void fillTrainingSamples () {
 		
-		LOGGER.menu("Reading...");
+		LOGGER.t("fillTrainingSamples","Reading...");
 		try(FileSystem zipFileSys = FileSystems.newFileSystem(ZIP_PATH, null)) {
 			
 			for(Path path:zipFileSys.getRootDirectories()) {
@@ -116,7 +115,7 @@ public class Assets implements Serializable {
 		}catch(IOException ex) {
 			ex.printStackTrace();
 		}
-		LOGGER.log(Level.FINE, "The input sample has downloaded.");
+		LOGGER.d("fillTrainingSamples", "The input sample has downloaded.");
 		return inputSample;
 	}
 	
@@ -125,7 +124,7 @@ public class Assets implements Serializable {
 		 
 	    try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("base6.bin"))) {
 			out.writeObject(this);
-			LOGGER.fine("Saved successfully.");
+			LOGGER.d("fillTrainingSamples","Saved successfully.");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -135,7 +134,7 @@ public class Assets implements Serializable {
 	public Assets loadFromF() {
 		try (ObjectInputStream in = new ObjectInputStream(new FileInputStream("base6.bin"))) {
 			Assets as = (Assets)in.readObject();
-			LOGGER.fine("Loaded successfully.");	
+			LOGGER.d("fillTrainingSamples", "Loaded successfully.");	
 			return as;
 		} catch (ClassNotFoundException|IOException e) {
 			e.printStackTrace();
